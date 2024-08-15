@@ -7,14 +7,20 @@ import com.sparta.schedulemanage.dto.ResponseDto;
 import com.sparta.schedulemanage.dto.TempResponseDto;
 import com.sparta.schedulemanage.entity.Entity;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @org.springframework.stereotype.Repository
 
 public class Repository {
     private final JdbcTemplate jdbcTemplate;
+    private List<Entity> findSchedule = new ArrayList<>();
+    // id와 비밀번호로 일정을 찾으려고 List타입을만듦
 
     public Repository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -109,7 +115,29 @@ public class Repository {
 
         });
     }
+
+    public Entity findByPw(int id, String pw) {
+        String sql = "SELECT * FROM schedules WHERE id = ? AND pw = ?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id, pw}, (rs, rowNum) -> {
+
+            Entity entity = new Entity();
+            entity.setId(rs.getInt("id"));
+            entity.setTask(rs.getString("task"));
+            entity.setManagePerson(rs.getString("managePerson"));
+            entity.setPw(rs.getString("pw"));
+            entity.setCreateDateTime(rs.getString("createDateTime"));
+            entity.setUpdateDateTime(rs.getString("updateDateTime"));
+            return entity;
+
+        });
+    }
+    public int updateSchedule(int id, String task, String managePerson, String updateDateTime, String pw) {
+        String sql = "UPDATE schedules SET task = ?, managePerson = ?, updateDateTime = ? WHERE id = ? AND pw = ?";
+        return jdbcTemplate.update(sql, task, managePerson, updateDateTime, id, pw);
+    }
 }
+
+
 
 
 

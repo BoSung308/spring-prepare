@@ -4,6 +4,7 @@ import com.sparta.schedulemanage.dto.RequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.boot.autoconfigure.task.TaskExecutionProperties;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,4 +30,9 @@ public class Entity {
         this.updateDateTime = simpleDateFormat.format(nowDate);
     }
 
+    public void update(String task, String managePerson) {
+        this.task = task;
+        this.managePerson = managePerson;
+        this.updateDateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+    }
 }

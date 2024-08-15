@@ -1,6 +1,7 @@
 
 package com.sparta.schedulemanage.controller;
 
+import com.sparta.schedulemanage.dto.ResponseDto;
 import com.sparta.schedulemanage.dto.TempResponseDto;
 import com.sparta.schedulemanage.dto.RequestDto;
 import com.sparta.schedulemanage.service.Service;
@@ -55,12 +56,17 @@ public class Controller {
         return service.getByModifiedManagerPerson(managePerson);
 
     }
+
     //4) 수정일과 담당자의 조회
     @GetMapping("modified3")
     public List<TempResponseDto> getByModifiedDateAndManagePerson(@RequestParam String updateDateTime, @RequestParam String managePerson) {
         return service.getByModifiedDateAndManagePerson(updateDateTime, managePerson);
     }
 
+    @PutMapping("/update")
+    public TempResponseDto updateSchedule(@RequestBody RequestDto requestDto) {
+        return service.updateSchedule(requestDto);
+    }
 }
 
 
