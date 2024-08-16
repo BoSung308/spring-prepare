@@ -1,12 +1,12 @@
 
 package com.sparta.schedulemanage.controller;
 
-import com.sparta.schedulemanage.dto.ResponseDto;
+import com.sparta.schedulemanage.dto.DeleteRequestDto;
+import com.sparta.schedulemanage.dto.DeleteResponseDto;
 import com.sparta.schedulemanage.dto.TempResponseDto;
 import com.sparta.schedulemanage.dto.RequestDto;
 import com.sparta.schedulemanage.service.Service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -45,20 +45,20 @@ public class Controller {
     }
 
     //    2) 수정일 조회
-    @GetMapping("/modified/{updateDateTime}")
-    public TempResponseDto getByModifiedDate(@RequestBody String updateDateTime) {
-        return service.getByModifiedDate(updateDateTime);
+    @GetMapping("/modified")
+    public String getModifiedDate(@RequestParam int id) {
+        return service.getModifiedDate(id);
     }
 
     //    3) 담당자 조회
-    @GetMapping("/modified2/{managePerson}")
-    public TempResponseDto getByModifiedManagerPerson(@RequestBody String managePerson) {
-        return service.getByModifiedManagerPerson(managePerson);
+    @GetMapping("/modified2")
+    public String getManagePerson(@RequestParam int id) {
+        return service.getManagePersonById(id);
 
     }
 
     //4) 수정일과 담당자의 조회
-    @GetMapping("modified3")
+    @GetMapping("/modified3")
     public List<TempResponseDto> getByModifiedDateAndManagePerson(@RequestParam String updateDateTime, @RequestParam String managePerson) {
         return service.getByModifiedDateAndManagePerson(updateDateTime, managePerson);
     }
@@ -67,10 +67,11 @@ public class Controller {
     public TempResponseDto updateSchedule(@RequestBody RequestDto requestDto) {
         return service.updateSchedule(requestDto);
     }
+
+    @DeleteMapping("/delete")
+    public DeleteResponseDto deletePw(@RequestBody DeleteRequestDto deleteRequestDto){
+        return service.deletePw(deleteRequestDto);
+    }
 }
-
-
-
-
 
 

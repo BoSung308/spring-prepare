@@ -1,6 +1,8 @@
 package com.sparta.schedulemanage.service;
 
 
+import com.sparta.schedulemanage.dto.DeleteRequestDto;
+import com.sparta.schedulemanage.dto.DeleteResponseDto;
 import com.sparta.schedulemanage.dto.RequestDto;
 import com.sparta.schedulemanage.dto.TempResponseDto;
 import com.sparta.schedulemanage.entity.Entity;
@@ -32,17 +34,17 @@ public class Service {
         return repository.getAllInfo(entity);
     }
 
-    public TempResponseDto getByModifiedDate(String updateDatetime) {
-        return repository.getByModifiedDate(updateDatetime);
+    public String getModifiedDate(int id) {
+        return repository.getModifiedDate(id);
     }
 
-    public TempResponseDto getByModifiedManagerPerson(String managePerson) {
+    public String getManagePersonById(int id) {
         // Repository 데이터를 조회하고 dto로 변환
-        return repository.findByUpdateDateTime(managePerson);
+        return repository.getManagePersonById(id);
     }
 
     public List<TempResponseDto> getByModifiedDateAndManagePerson(String updateDateTime, String managePerson) {
-        // Repository 데이터를 조회하고 dto로 변환
+
         return repository.findByModifiedDateAndManagePersonOrderByupdateTime(updateDateTime, managePerson);
     }
 
@@ -65,6 +67,20 @@ public class Service {
 
         return tempResponseDto;
     }
+
+        public DeleteResponseDto deletePw(DeleteRequestDto deleteRequestDto){
+        int deleteupdate = repository.deleteByPw(deleteRequestDto.getId(), deleteRequestDto.getPw());
+        DeleteResponseDto drd = new DeleteResponseDto();
+        if(deleteupdate > 0){
+            drd.setSuccess(true);
+            drd.setMessage("성공적으로 삭제가 되었습니다.");
+        } else {
+            drd.setSuccess(false);
+            drd.setMessage("삭제가 실패하였습니다.");
+        }
+        return drd;
+        }
+
 }
 
 

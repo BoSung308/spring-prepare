@@ -1,18 +1,14 @@
 package com.sparta.schedulemanage.repository;
 
 
-import com.sparta.schedulemanage.ScheduleManageApplication;
 import com.sparta.schedulemanage.dto.RequestDto;
-import com.sparta.schedulemanage.dto.ResponseDto;
 import com.sparta.schedulemanage.dto.TempResponseDto;
 import com.sparta.schedulemanage.entity.Entity;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @org.springframework.stereotype.Repository
@@ -64,60 +60,39 @@ public class Repository {
         });
     }
 
-    public TempResponseDto findByUpdateDateTime(String updateDateTime) {
-        String sql = "SELECT * FROM major WHERE updateDateTime=?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{updateDateTime}, (rs, rowNum) -> {
-
-
-            TempResponseDto schedule = new TempResponseDto();
-            schedule.setManagePerson(rs.getString("managePerson"));
-            schedule.setPw(rs.getString("pw"));
-            schedule.setTask(rs.getString("task"));
-            schedule.setCreateDateTime(rs.getString("createDateTime"));
-            schedule.setUpdateDateTime(rs.getString("updateDateTime"));
-
-            return schedule;
-        });
+    public String getModifiedDate(int id) {
+        String sql = "SELECT updateDateTime FROM major WHERE id=?";
+        return jdbcTemplate.queryForObject(sql, new Object[]{id}, String.class);
     }
 
-    public TempResponseDto getByModifiedDate(String updateDateTime) {
-        String sql = "SELECT * FROM major WHERE updateDateTime=?";
-        return jdbcTemplate.queryForObject(sql, new Object[]{updateDateTime}, (rs, rowNum) -> {
-
-
-            TempResponseDto schedule = new TempResponseDto();
-            schedule.setManagePerson(rs.getString("managePerson"));
-            schedule.setPw(rs.getString("pw"));
-            schedule.setTask(rs.getString("task"));
-            schedule.setCreateDateTime(rs.getString("createDateTime"));
-            schedule.setUpdateDateTime(rs.getString("updateDateTime"));
-
-            return schedule;
-
-        });
+    public String getManagePersonById(int id) {
+        String sql = "SELECT managePerson FROM major WHERE id=?";
+            return jdbcTemplate.queryForObject(sql, new Object[]{id}, String.class);
     }
 
     public List<TempResponseDto> findByModifiedDateAndManagePersonOrderByupdateTime(String updateDateTime,
                                                                                     String managePerson) {
+
+        if(updateDateTime == null || updateDateTime.isEmpty() || managePerson ==null || managePerson.isEmpty()) {
+            throw new IllegalArgumentException("올바르지 않은 값입니다.");
+        }
         String sql = "SELECT * FROM major WHERE updateDateTime = ? AND managePerson = ? ORDER BY updateDateTime DESC";
 
         return jdbcTemplate.query(sql, new Object[]{updateDateTime, managePerson}, (rs, rowNum) -> {
+            TempResponseDto dto1 = new TempResponseDto();
 
-            TempResponseDto responseDto = new TempResponseDto();
-
-            responseDto.setTask(rs.getString("task"));
-            responseDto.setPw(rs.getString("pw"));
-            responseDto.setManagePerson(rs.getString("managePerson"));
-            responseDto.setCreateDateTime(rs.getString("createDateTime"));
-            responseDto.setUpdateDateTime(rs.getString("updateDateTime"));
-
-            return responseDto;
-
+            dto1.setTask(rs.getString("task"));
+            dto1.setPw(rs.getString("pw"));
+            dto1.setManagePerson(rs.getString("managePerson"));
+            dto1.setCreateDateTime(rs.getString("createDateTime"));
+            dto1.setUpdateDateTime(rs.getString("updateDateTime"));
+            return dto1;
+            // 입력값이 없을때,, 예외나 if 사용
         });
     }
 
     public Entity findByPw(int id, String pw) {
-        String sql = "SELECT * FROM schedules WHERE id = ? AND pw = ?";
+        String sql = "SELECT * FROM major WHERE id = ? AND pw = ?";
         return jdbcTemplate.queryForObject(sql, new Object[]{id, pw}, (rs, rowNum) -> {
 
             Entity entity = new Entity();
@@ -131,11 +106,18 @@ public class Repository {
 
         });
     }
+
     public int updateSchedule(int id, String task, String managePerson, String updateDateTime, String pw) {
-        String sql = "UPDATE schedules SET task = ?, managePerson = ?, updateDateTime = ? WHERE id = ? AND pw = ?";
+        String sql = "UPDATE major SET task = ?, managePerson = ?, updateDateTime = ? WHERE id = ? AND pw = ?";
         return jdbcTemplate.update(sql, task, managePerson, updateDateTime, id, pw);
     }
+
+    public int deleteByPw(int id, String pw) {
+        String sql = "DELETE FROM major WHERE id = ? AND pw = ?";
+        return jdbcTemplate.update(sql, id, pw); //
+    }
 }
+
 
 
 
